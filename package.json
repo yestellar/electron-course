@@ -1,0 +1,22 @@
+{
+  "name": "electron-course",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yestellar/electron-course.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/yestellar/electron-course/issues"
+  },
+  "homepage": "https://github.com/yestellar/electron-course#readme",
+  "devDependencies": {
+    "electron": "^15.1.2"
+  }
+}
