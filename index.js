@@ -2,6 +2,8 @@ const { app, BrowserWindow } = require('electron')
 
 let mainWindow = null 
 
+console.log('hello')
+
 function createMainWindow() {
     mainWindow = new BrowserWindow({
        width: 800,
@@ -10,7 +12,9 @@ function createMainWindow() {
     mainWindow.loadFile('index.html')
     mainWindow.on('closed', () => {
         mainWindow = null
+        debugger
     })
+    mainWindow.webContents.openDevTools()
 }
 
 app.on('ready', createMainWindow)
