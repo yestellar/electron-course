@@ -1,8 +1,8 @@
 const { app, BrowserWindow } = require('electron')
 
-let mainWindow = null 
+// console.log(app.getPath('userData'))
 
-console.log('hello')
+let mainWindow = null 
 
 function createMainWindow() {
     mainWindow = new BrowserWindow({
@@ -19,8 +19,10 @@ function createMainWindow() {
 
 app.on('ready', createMainWindow)
 
-app.on('window-all-closed', () => {
-    if (process.platform !== 'darwin') {
-        app.quit() 
-    }
+app.on('window-all-closed', () => {  
+    app.quit()
 })
+
+// app.on('before-quit', (event) => {
+//     console.log('before-quit');
+// })
