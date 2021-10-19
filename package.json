@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "electron .",
+    "watch": "nodemon --exec electron .",
     "debug": "electron --inspect=5858 ."
   },
   "repository": {
@@ -18,6 +19,7 @@
   },
   "homepage": "https://github.com/yestellar/electron-course#readme",
   "devDependencies": {
-    "electron": "^15.1.2"
+    "electron": "^15.1.2",
+    "nodemon": "^2.0.13"
   }
 }
