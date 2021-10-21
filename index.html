@@ -4,9 +4,22 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
     <title>Document</title>
 </head>
 <body>
-    <h1>Hello My Friend!</h1>
+    <div class="widget">
+        <p class="price-container">
+            <img id="btc-image">
+            BTC: $<span id="btc-price"></span>
+        </p>
+        <p class="date-container">
+            Last update: <span id="date"></span>
+        </p>   
+    </div>
+
+    <script>
+        require('./coingecko')
+    </script>
 </body>
 </html>

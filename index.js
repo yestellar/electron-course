@@ -1,32 +1,36 @@
 const { app, BrowserWindow } = require('electron')
 
-// console.log('userDataPath: ', app.getPath('userData'))
-
-let mainWindow = null 
+let mainWindow = null
 
 function createMainWindow() {
     mainWindow = new BrowserWindow({
-       width: 800,
-       height: 600,
-       show: false
+        width: 250,
+        height: 88,
+        resizable: false,
+        titleBarStyle: 'hidden',
+        // titleBarOverlay: true,
+        show: false,
+        transparent: true,
+        alwaysOnTop: true,
+        skipTaskbar: true,
+        webPreferences: {
+            nodeIntegration: true,
+            contextIsolation: false,
+        },
+        thickFrame: true,
     })
-    mainWindow.loadURL('https://google.com')
-    mainWindow.on('closed', () => {
-        mainWindow = null
-        debugger
-    })
+    mainWindow.loadFile('index.html')
     mainWindow.once('ready-to-show', () => {
         mainWindow.show()
+    })
+    mainWindow.on('closed', () => {
+        mainWindow = null
     })
     // mainWindow.webContents.openDevTools()
 }
 
 app.on('ready', createMainWindow)
 
-app.on('window-all-closed', () => {  
+app.on('window-all-closed', () => {
     app.quit()
-})
-
-app.on('before-quit', (event) => {
-    console.log('before-quit');
 })
