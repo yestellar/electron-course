@@ -8,32 +8,49 @@ body {
     font-family: Arial;
     -webkit-app-region: drag;
     -webkit-user-select: none;
-}
-
-.widget {
-    background: #444;
-    border-radius: 5px;
     padding: 15px;
 }
 
-.price-container {
+.coin-container {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
     font-size: 22px;
     font-weight: bold;
     color: #fff
 }
 
-.price-container #btc-image {
+.coin-container:hover {
+    background-color: #000;
+}
+
+.coin-container:first-child {
+    display: none;
+}
+
+.coin-container:not(:last-child) {
+    margin-bottom: 30px;
+}
+
+.image {
     width: 32px;
     height: 32px;
     margin-right: 10px;
     -webkit-app-region: no-drag;
 }
 
-.date-container {
+.name {
+    margin-right: 10px;
+    font-size: 15px;
+}
+
+.date {
+    display: block;
+    width: 100%;
     font-size: 14px;
     margin-top: 10px;
+    font-weight: normal;
     text-align: left;
-    color: rgba(255, 255, 255, 0.7);
+    color: rgba(255, 255, 255, 0.5);
+    width: 100%;
 }

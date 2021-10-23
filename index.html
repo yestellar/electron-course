@@ -8,18 +8,45 @@
     <title>Document</title>
 </head>
 <body>
-    <div class="widget">
-        <p class="price-container">
-            <img id="btc-image">
-            BTC: $<span id="btc-price"></span>
+    <div class="coin-container">
+        <img class="image" onclick="openSettings()">
+        <p class="p">
+            <span class="name"></span>
+            </br>
+            $<span class="price"></span>
         </p>
-        <p class="date-container">
-            Last update: <span id="date"></span>
-        </p>   
+        <span class="date"></span>
     </div>
-
     <script>
-        require('./coingecko')
+         function loadData(data) {
+            data.forEach((coin) => appendCoinNode(coin))
+             
+            window.api.send('response:load-data')
+        }
+
+        function appendCoinNode({ current_price, name, last_updated, image }) {
+            const coinContainer = document.querySelector('.coin-container')
+            const clone = coinContainer.cloneNode(true)
+
+            clone.querySelector('.image').src = image
+            clone.querySelector('.name').innerText = name
+            clone.querySelector('.price').innerText = current_price
+            clone.querySelector('.date').innerText = new Date(last_updated).toLocaleString()
+
+            console.log(clone);
+
+            document.body.appendChild(clone)    
+        }
+
+        function setIPC() {
+            window.api.receive('request:load-data', loadData)
+        }
+
+        function openSettings() {
+            window.api.send('request:open-settings')
+        }
+
+        setIPC()
     </script>
 </body>
 </html>
