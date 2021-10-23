@@ -8,27 +8,10 @@ body {
     font-family: Arial;
     -webkit-app-region: drag;
     user-select: none;
-    padding: 15px;
+    padding: 50px 25px;
+    color: rgb(4, 43, 95)
 }
 
-.price-container {
-    display: flex;
-    align-items: center;
-    font-size: 22px;
-    font-weight: bold;
-    color: #fff
-}
-
-.price-container #btc-image {
-    width: 32px;
-    height: 32px;
-    margin-right: 10px;
-    -webkit-app-region: no-drag;
-}
-
-.date-container {
-    font-size: 14px;
-    margin-top: 10px;
-    text-align: left;
-    color: rgba(255, 255, 255, 0.7);
+h2 {
+    margin-top: 10px
 }

@@ -1,34 +1,33 @@
-const { app, BrowserWindow } = require('electron')
+const { app, BrowserWindow, session } = require('electron')
 
-let widgetWindow = null
+let win, win2
 
-function createWidgetWindow() {
-    widgetWindow = new BrowserWindow({
-        width: 250,
-        height: 88,
-        webPreferences: {
-            nodeIntegration: true,
-            contextIsolation: false
-        },
-        frame: false,
-        // titleBarStyle: 'hidden',
-        // titleBarOverlay: true,
-        // backgroundColor: '#444',
-        alwaysOnTop: true,
-        resizable: false,
-        hasShadow: false,
-        // thickFrame: false,
-        transparent: true
+function createWindow() {
+    // Первое окно
+    win = new BrowserWindow({
+        width: 800, height: 600,
+        frame: false, titleBarOverlay: true, titleBarStyle: 'hidden',
     })
-    
-    widgetWindow.loadFile('index.html')
-    
-    widgetWindow.on('closed', () => {
-        widgetWindow = null
+    win.loadFile('index.html')
+    win.on('closed', () => { win = null })
+    win.webContents.openDevTools()
+    // Второе окно
+    win2 = new BrowserWindow({
+        width: 800, height: 600,
+        frame: false, titleBarOverlay: true, titleBarStyle: 'hidden',
     })
+    win2.loadFile('index2.html')
+    win2.on('closed', () => { win2 = null })
+    win2.webContents.openDevTools()
+    //  Session
+    let session = win.webContents.session
+    let session2 = win2.webContents.session 
+    let defaultSession = session.defaultSession
+
+    console.log( Object.is(session, session2) )
 }
 
-app.on('ready', createWidgetWindow)
+app.on('ready', createWindow)
 
 app.on('window-all-closed', () => {
     app.quit()
