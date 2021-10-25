@@ -1,4 +1,4 @@
-const { app, BrowserWindow } = require('electron')
+const { app, BrowserWindow, shell, webContents } = require('electron')
 
 let widgetWindow = null
 
@@ -11,14 +11,11 @@ function createWidgetWindow() {
             contextIsolation: false
         },
         frame: false,
-        // titleBarStyle: 'hidden',
-        // titleBarOverlay: true,
-        // backgroundColor: '#444',
         alwaysOnTop: true,
         resizable: false,
         hasShadow: false,
-        // thickFrame: false,
-        transparent: true
+        transparent: true,
+        show: false
     })
     
     widgetWindow.loadFile('index.html')
@@ -26,6 +23,17 @@ function createWidgetWindow() {
     widgetWindow.on('closed', () => {
         widgetWindow = null
     })
+
+    widgetWindow.webContents.on('did-finish-load', () => {
+        widgetWindow.show()
+    })
+
+    widgetWindow.webContents.setWindowOpenHandler((e) => {
+        shell.openExternal(e.url)
+        return { action: 'deny' }
+    })
+
+    console.log( webContents.getAllWebContents() )
 }
 
 app.on('ready', createWidgetWindow)
