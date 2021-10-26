@@ -8,17 +8,59 @@
     <title>Document</title>
 </head>
 <body>
-    <p class="price-container">
-        <img id="btc-image">
-        BTC: $<span id="btc-price"></span>
-        <a href="https://google.com" target="_blank">Link</a>
-    </p>
-    <p class="date-container">
-        Last update: <span id="date"></span>
-    </p>   
+    <div class="coin-contaier-template">
+        <div class="content">
+            <img class="image" width="32" height="32">
+            <span class="symbol"></span>: $<span class="price"></span>
+        </div>
+        <div class="footer">
+            <span class="date"></span>
+            <a class="link" target="_blank">Open</a>
+        </div>   
+    </div>
 
     <script>
-        require('./coingecko')
+        const ipcRender = require('electron').ipcRenderer
+
+        let isWindowOpen = false
+
+        function setIPC() {
+            ipcRender.on('get-coins--response', (e, coins) => {
+                if (!isWindowOpen) ipcRender.send('show-window')
+
+                clearData()
+                mountData(coins)
+            })
+        }
+
+        function clearData() {
+            const coins = document.querySelectorAll('.coin-contaier')
+            coins.forEach(coin => { coin.remove() })
+        }
+
+        function mountData(coins) {
+            for (let coin of coins) {
+                const coinContainerClone = document.querySelector('.coin-contaier-template').cloneNode(true)
+
+                coinContainerClone.querySelector('.image').src = coin.image
+                coinContainerClone.querySelector('.symbol').textContent = coin.symbol
+                coinContainerClone.querySelector('.price').textContent = coin.current_price
+                coinContainerClone.querySelector('.date').textContent = new Date(coin.last_updated).toLocaleString()
+                coinContainerClone.querySelector('.link').href = 'https://www.coingecko.com/en/coins/' + coin.id
+
+                coinContainerClone.classList.remove('coin-contaier-template')
+                coinContainerClone.classList.add('coin-contaier')
+                
+                document.body.appendChild(coinContainerClone)
+            }
+        }
+
+        setIPC()
+
+        setInterval(() => {
+            ipcRender.send('get-coins--request')
+        }, 3000)
+        ipcRender.send('get-coins--request')
     </script>
 </body>
 </html>

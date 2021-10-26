@@ -1,11 +1,14 @@
-const { app, BrowserWindow, shell, webContents } = require('electron')
+const { app, BrowserWindow, shell, ipcMain } = require('electron')
+const coingecko = require('./coingecko')
+
+const coinNames = ['bitcoin', 'ethereum', 'litecoin']
 
 let widgetWindow = null
 
 function createWidgetWindow() {
     widgetWindow = new BrowserWindow({
         width: 250,
-        height: 88,
+        // height: 88,
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false
@@ -33,9 +36,20 @@ function createWidgetWindow() {
         return { action: 'deny' }
     })
 
-    console.log( webContents.getAllWebContents() )
+    // widgetWindow.webContents.openDevTools()
 }
 
+// IPC events
+ipcMain.on('get-coins--request', async (e) => {
+    const response = await coingecko.fetchCoins(coinNames)
+    e.reply('get-coins--response', response.data)
+})
+
+ipcMain.on('show-window', (e) => {
+    widgetWindow.show()
+})
+
+// App lifecycle events
 app.on('ready', createWidgetWindow)
 
 app.on('window-all-closed', () => {
