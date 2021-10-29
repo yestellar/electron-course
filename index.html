@@ -8,17 +8,52 @@
     <title>Document</title>
 </head>
 <body>
-    <p class="price-container">
-        <img id="btc-image">
-        BTC: $<span id="btc-price"></span>
-        <a href="https://google.com" target="_blank">Link</a>
-    </p>
-    <p class="date-container">
-        Last update: <span id="date"></span>
-    </p>   
+    <div class="coin-template">
+        <div class="main">
+            <img class="image" width="32" height="32">
+            <span class="symbol"></span>: $<span class="price"></span>
+        </div>
+        <div class="footer">
+            <span class="date"></span>
+            <a class="link" target="_blank">open</a>
+        </div>
+    </div> 
 
     <script>
-        require('./coingecko')
+        const { ipcRenderer } = require('electron')
+
+        function clearCoins() {
+            document.querySelectorAll('.coin').forEach(coin => {
+                coin.remove()
+            })
+        }
+
+        function mountCoins(coins) {
+            const coinTemplate = document.querySelector('.coin-template')
+            console.log(coins);
+
+            for (coin of coins) {
+                const coinTemplateClone = coinTemplate.cloneNode(true)
+
+                coinTemplateClone.querySelector('.image').src = coin.image
+                coinTemplateClone.querySelector('.symbol').textContent = coin.symbol
+                coinTemplateClone.querySelector('.price').textContent = coin.current_price
+                coinTemplateClone.querySelector('.date').textContent = new Date(coin.last_updated).toLocaleTimeString()
+                coinTemplateClone.querySelector('.link').href = 'https://www.coingecko.com/en/coins/' + coin.id
+
+                coinTemplateClone.classList.remove('coin-template')
+                coinTemplateClone.classList.add('coin')
+
+                document.body.appendChild(coinTemplateClone)
+            }
+        }
+        
+        ipcRenderer.on('data-response', (e, coins) => {
+            clearCoins()
+            mountCoins(coins)
+        })
+
+        ipcRenderer.send('data-request')
     </script>
 </body>
 </html>

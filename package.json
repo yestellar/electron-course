@@ -21,5 +21,8 @@
   "devDependencies": {
     "electron": "^15.1.2",
     "nodemon": "^2.0.13"
+  },
+  "dependencies": {
+    "axios": "^0.24.0"
   }
 }
