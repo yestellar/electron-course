@@ -6,12 +6,10 @@
 
 body {
     font-family: Arial;
-    -webkit-app-region: drag;
-    user-select: none;
-    padding: 50px 25px;
-    color: rgb(4, 43, 95)
+    background-color: #272225;
+    padding: 15px;
 }
 
-h2 {
-    margin-top: 10px
+h1 {
+    color: #fff;
 }

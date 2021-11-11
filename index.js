@@ -1,33 +1,42 @@
 const { app, BrowserWindow, session } = require('electron')
 
-let win, win2
+let firstWindow = null
+let secondWindow = null
 
-function createWindow() {
-    // Первое окно
-    win = new BrowserWindow({
-        width: 800, height: 600,
-        frame: false, titleBarOverlay: true, titleBarStyle: 'hidden',
+// Window's functions
+function createWindows() {
+    // Create custom session 
+    const customSession = session.fromPartition('persist:custom-session')
+    // Create the first window
+    firstWindow = new BrowserWindow({ width: 600, height: 600, x: 100, y: 200 })
+    firstWindow.loadFile('first.html')
+    firstWindow.on('closed', () => { firstWindow = null })
+    firstWindow.webContents.openDevTools()
+    // Create the second window
+    secondWindow = new BrowserWindow({ 
+        width: 600, 
+        height: 600,
+        webPreferences: {
+            // session: customSession
+            partition: 'persist:custom-session'
+        }
     })
-    win.loadFile('index.html')
-    win.on('closed', () => { win = null })
-    win.webContents.openDevTools()
-    // Второе окно
-    win2 = new BrowserWindow({
-        width: 800, height: 600,
-        frame: false, titleBarOverlay: true, titleBarStyle: 'hidden',
-    })
-    win2.loadFile('index2.html')
-    win2.on('closed', () => { win2 = null })
-    win2.webContents.openDevTools()
-    //  Session
-    let session = win.webContents.session
-    let session2 = win2.webContents.session 
-    let defaultSession = session.defaultSession
+    secondWindow.loadFile('second.html')
+    secondWindow.on('closed', () => { secondWindow = null })
+    secondWindow.webContents.openDevTools()
+    // Session
+    const ses = firstWindow.webContents.session
+    const ses2 = secondWindow.webContents.session
+    const defaultSession = session.defaultSession
 
-    console.log( Object.is(session, session2) )
+    ses.clearStorageData()
+
+
+    // console.log(Object.is(defaultSession, cryptoSession))
 }
 
-app.on('ready', createWindow)
+// App lifecycle events
+app.on('ready', createWindows)
 
 app.on('window-all-closed', () => {
     app.quit()
