@@ -1,50 +1,42 @@
-const { app, BrowserWindow, shell, ipcMain } = require('electron')
-const coingecko = require('./coingecko')
+const { app, BrowserWindow, session } = require('electron')
 
-let widgetWindow = null
+let firstWindow = null
+let secondWindow = null
 
-function createWidgetWindow() {
-    widgetWindow = new BrowserWindow({
-        width: 250,
-        // height: 88,
+// Window's functions
+function createWindows() {
+    // Create custom session 
+    const customSession = session.fromPartition('persist:custom-session')
+    // Create the first window
+    firstWindow = new BrowserWindow({ width: 600, height: 600, x: 100, y: 200 })
+    firstWindow.loadFile('first.html')
+    firstWindow.on('closed', () => { firstWindow = null })
+    firstWindow.webContents.openDevTools()
+    // Create the second window
+    secondWindow = new BrowserWindow({ 
+        width: 600, 
+        height: 600,
         webPreferences: {
-            nodeIntegration: true,
-            contextIsolation: false
-        },
-        frame: false,
-        alwaysOnTop: true,
-        resizable: false,
-        hasShadow: false,
-        transparent: true,
-        show: false
+            // session: customSession
+            partition: 'persist:custom-session'
+        }
     })
-    
-    widgetWindow.loadFile('index.html')
-    
-    widgetWindow.on('closed', () => {
-        widgetWindow = null
-    })
+    secondWindow.loadFile('second.html')
+    secondWindow.on('closed', () => { secondWindow = null })
+    secondWindow.webContents.openDevTools()
+    // Session
+    const ses = firstWindow.webContents.session
+    const ses2 = secondWindow.webContents.session
+    const defaultSession = session.defaultSession
 
-    widgetWindow.webContents.on('did-finish-load', () => {
-        widgetWindow.show()
-    })
+    ses.clearStorageData()
 
-    widgetWindow.webContents.setWindowOpenHandler((e) => {
-        shell.openExternal(e.url)
-        return { action: 'deny' }
-    })
 
-    // widgetWindow.webContents.openDevTools()
+    // console.log(Object.is(defaultSession, cryptoSession))
 }
 
-ipcMain.on('data-request', async (e, ...args) => {
-    const coins = await coingecko.fetchCoins('bitcoin,ethereum,litecoin,uniswap,dogecoin')
-
-    e.reply('data-response', coins)
-    // widgetWindow.webContents.send('data-response', coinNames)
-})
-
-app.on('ready', createWidgetWindow)
+// App lifecycle events
+app.on('ready', createWindows)
 
 app.on('window-all-closed', () => {
     app.quit()
