@@ -1,38 +1,24 @@
-const { app, BrowserWindow, session } = require('electron')
+const { app, BrowserWindow } = require('electron')
 
-let firstWindow = null
-let secondWindow = null
+let mainWindow = null
 
 // Window's functions
 function createWindows() {
-    // Create custom session 
-    const customSession = session.fromPartition('persist:custom-session')
-    // Create the first window
-    firstWindow = new BrowserWindow({ width: 600, height: 600, x: 100, y: 200 })
-    firstWindow.loadFile('first.html')
-    firstWindow.on('closed', () => { firstWindow = null })
-    firstWindow.webContents.openDevTools()
-    // Create the second window
-    secondWindow = new BrowserWindow({ 
-        width: 600, 
-        height: 600,
-        webPreferences: {
-            // session: customSession
-            partition: 'persist:custom-session'
-        }
+    mainWindow = new BrowserWindow({ width: 600, height: 600 })
+    mainWindow.loadURL('https://github.com')
+
+    mainWindow.webContents.on('did-finish-load', async () => {
+        // Set cookie
+        const cookie = { url: 'https://myappdomain.com', name: 'cookieName', value: 'cookieValue' }
+        await mainWindow.webContents.session.cookies.set(cookie)
+        // Remove cookie 
+        await mainWindow.webContents.session.cookies.remove('https://myappdomain.com', 'cookieName')
+        // Get cookies 
+        const cookies = await mainWindow.webContents.session.cookies.get({})
+        console.log(cookies)
     })
-    secondWindow.loadFile('second.html')
-    secondWindow.on('closed', () => { secondWindow = null })
-    secondWindow.webContents.openDevTools()
-    // Session
-    const ses = firstWindow.webContents.session
-    const ses2 = secondWindow.webContents.session
-    const defaultSession = session.defaultSession
 
-    ses.clearStorageData()
-
-
-    // console.log(Object.is(defaultSession, cryptoSession))
+    mainWindow.on('closed', () => { mainWindow = null })
 }
 
 // App lifecycle events
