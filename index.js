@@ -1,4 +1,4 @@
-const { app, BrowserWindow, dialog } = require('electron')
+const { app, BrowserWindow, globalShortcut } = require('electron')
 
 let window = null
 
@@ -9,8 +9,7 @@ function createWindow() {
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false
-        },
-        show: false
+        }
     })
     
     window.loadFile('index.html')
@@ -19,37 +18,16 @@ function createWindow() {
         window = null
     })
 
-    window.webContents.on('did-finish-load', () => {
-        window.show()
-
-        // dialog.showOpenDialog({
-        //     buttonLabel: 'Select a photo',
-        //     defaultPath: app.getPath('desktop'),
-        //     properties: ['openFile', 'multiSelections', 'showHiddenFiles', 'createDirectory'],
-        //     filters: [
-        //         { name: 'Images', extensions: ['jpg', 'png'] }
-        //     ]
-        // }).then(res => {
-        //     console.log(res);
-        // })
-
-        // dialog.showSaveDialog({}).then(res => console.log(res))
-
-        // dialog.showMessageBox({
-        //     message: 'Message box',
-        //     detail: 'Detail',
-        //     buttons: ['Yes', 'No', 'Maybe']
-        // }).then(res => {
-        //     console.log(res);
-        // })
-
-        // dialog.showErrorBox('Title', 'Content')
-    })
-
-    // window.webContents.openDevTools()
+    window.webContents.openDevTools()
 }
 
-app.on('ready', createWindow)
+app.on('ready', () => {
+    createWindow()
+    globalShortcut.register('CommandOrControl+Shift+I', () => {
+        console.log('CommandOrControl+Shift+I is pressed')
+        globalShortcut.unregister('CommandOrControl+Shift+I')
+    })
+})
 
 app.on('window-all-closed', () => {
     app.quit()
