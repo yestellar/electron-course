@@ -1,50 +1,55 @@
-const { app, BrowserWindow, shell, ipcMain } = require('electron')
-const coingecko = require('./coingecko')
+const { app, BrowserWindow, dialog } = require('electron')
 
-let widgetWindow = null
+let window = null
 
-function createWidgetWindow() {
-    widgetWindow = new BrowserWindow({
-        width: 250,
-        // height: 88,
+function createWindow() {
+    window = new BrowserWindow({
+        width: 800,
+        height: 600,
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false
         },
-        frame: false,
-        alwaysOnTop: true,
-        resizable: false,
-        hasShadow: false,
-        transparent: true,
         show: false
     })
     
-    widgetWindow.loadFile('index.html')
+    window.loadFile('index.html')
     
-    widgetWindow.on('closed', () => {
-        widgetWindow = null
+    window.on('closed', () => {
+        window = null
     })
 
-    widgetWindow.webContents.on('did-finish-load', () => {
-        widgetWindow.show()
+    window.webContents.on('did-finish-load', () => {
+        window.show()
+
+        // dialog.showOpenDialog({
+        //     buttonLabel: 'Select a photo',
+        //     defaultPath: app.getPath('desktop'),
+        //     properties: ['openFile', 'multiSelections', 'showHiddenFiles', 'createDirectory'],
+        //     filters: [
+        //         { name: 'Images', extensions: ['jpg', 'png'] }
+        //     ]
+        // }).then(res => {
+        //     console.log(res);
+        // })
+
+        // dialog.showSaveDialog({}).then(res => console.log(res))
+
+        // dialog.showMessageBox({
+        //     message: 'Message box',
+        //     detail: 'Detail',
+        //     buttons: ['Yes', 'No', 'Maybe']
+        // }).then(res => {
+        //     console.log(res);
+        // })
+
+        // dialog.showErrorBox('Title', 'Content')
     })
 
-    widgetWindow.webContents.setWindowOpenHandler((e) => {
-        shell.openExternal(e.url)
-        return { action: 'deny' }
-    })
-
-    // widgetWindow.webContents.openDevTools()
+    // window.webContents.openDevTools()
 }
 
-ipcMain.on('data-request', async (e, ...args) => {
-    const coins = await coingecko.fetchCoins('bitcoin,ethereum,litecoin,uniswap,dogecoin')
-
-    e.reply('data-response', coins)
-    // widgetWindow.webContents.send('data-response', coinNames)
-})
-
-app.on('ready', createWidgetWindow)
+app.on('ready', createWindow)
 
 app.on('window-all-closed', () => {
     app.quit()
