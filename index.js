@@ -1,6 +1,8 @@
-const { app, BrowserWindow, globalShortcut } = require('electron')
+const { app, BrowserWindow, Menu } = require('electron')
 
 let window = null
+
+let mainMenu = Menu.buildFromTemplate(require('./mainMenu'))
 
 function createWindow() {
     window = new BrowserWindow({
@@ -23,10 +25,7 @@ function createWindow() {
 
 app.on('ready', () => {
     createWindow()
-    globalShortcut.register('CommandOrControl+Shift+I', () => {
-        console.log('CommandOrControl+Shift+I is pressed')
-        globalShortcut.unregister('CommandOrControl+Shift+I')
-    })
+    Menu.setApplicationMenu(mainMenu)
 })
 
 app.on('window-all-closed', () => {
